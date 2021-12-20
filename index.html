@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+
+    <style>
+        html {
+            height: 100vh;
+        }
+        body {
+            background-color: #1a1b26;
+            color: #fff;
+            display: grid;
+            justify-items: center;
+            align-items: center;
+            height: 100%;
+        }
+        .todo-container {
+            border: 1px solid #3b3b52;
+            padding: 25px;
+            border-radius: 15px;
+            max-width: 800px;
+            margin: 80px;
+        }
+        .todo-input {
+            border: 1px solid #3b3b52;
+            background-color: transparent;
+            color: #fff;
+            padding: 5px 10px;
+            outline: none;
+        }
+        .todo-submit {
+            border-radius: 0;
+            background-color: #445783;
+            border: none;
+            padding: 6px;
+            color: #fff;
+            transition: 450ms all;
+            cursor: pointer;
+        }
+        .todo-submit:hover {
+            background-color: #6fb7e3;
+        }
+        .todo-list {
+            list-style: none;
+            padding: 0 10px;
+        }
+        .todo-list li:not(:last-child) {
+            margin-bottom: 10px;
+        }
+        .todo-list li {
+            text-transform: capitalize;
+        }
+        .todo-list button {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .todo-list button:first-child {
+            margin-left: 10px;
+        }
+        .completed {
+            text-decoration: line-through !important;
+            color: #838383 !important;
+            opacity: .5 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="todo-container">
+        <div class="todo-input-group">
+            <input type="text" class="todo-input" name="todo" placeholder="Write a todo">
+            <input type="submit" class="todo-submit" value="Add" onclick="addTodo()">
+        </div>
+        <ul class="todo-list">
+            <!-- TODOS HERE -->
+        </ul>
+    </div>
+
+    <script>
+        "use strict";
+        const list = document.querySelector(".todo-list")
+
+        let todoList = [
+            {
+                "id": 1,
+                "content":"Buy a keyboard",
+                "status": false
+            },
+            {
+                "id": 2,
+                "content":"Buy a mouse",
+                "status": false
+            },
+            {
+                "id": 3,
+                "content":"Build a project",
+                "status": true
+            }
+        ]
+
+        
+        function addTodo() {
+            const todo_content = document.querySelector(".todo-input").value
+
+            const todo_c = document.createElement("LI")
+            const todo_d = document.createElement("BUTTON")
+            const todo_f = document.createElement("BUTTON")
+
+            const todoID = parseInt(Math.random() * 999)
+
+            todo_d.classList.add("todo-delete")
+            todo_f.classList.add("todo-finish")
+
+            todo_d.innerHTML = "❌"
+            todo_f.innerHTML = "✅"
+
+            todo_d.setAttribute("onclick",`deleteTodo(${todoID})`)
+            todo_f.setAttribute("onclick",`finishTodo(${todoID})`)
+            todo_c.setAttribute("todoID", todoID)
+
+            todo_c.innerHTML = todo_content;
+
+            list.appendChild(todo_c)
+            todo_c.appendChild(todo_d)
+            todo_c.appendChild(todo_f)
+
+            const todoObject = {
+                id: todoID,
+                content: todo_content,
+                status: false
+            }
+
+            todoList.push(todoObject)
+
+            saveTodo(todoObject)
+        }
+
+        function deleteTodo(id) {
+            const element = document.querySelector(`li[todoID="${id}"`)
+            element.remove()
+        }
+
+        function finishTodo(id) {
+            const element = document.querySelector(`li[todoID="${id}"`)
+            element.classList.toggle("completed")
+        }
+
+        function saveTodo() {
+            localStorage.setItem("todos", JSON.stringify(todoList))
+        }
+
+        function getTodos() {
+            let liste = JSON.parse(localStorage.getItem("todos"))
+            liste.forEach(element => {
+                list.insertAdjacentHTML("beforeend",`<li todoid="${element.id}">${element.content}<button class="todo-delete" onclick="deleteTodo(${element.id})">❌</button><button class="todo-finish" onclick="finishTodo(${element.id})">✅</button></li>`)
+            });
+        }
+
+        getTodos()
+    </script>
+</body>
+</html>
